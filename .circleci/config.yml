@@ -37,6 +37,15 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - run: echo hello
+  test_code:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - run: exit 1
+      - run:
+          name: on error
+          command: echo "Hello Error!"
+          when: on_fail
   print_world:
     docker:
       - image: circleci/node:13.8.0
@@ -61,6 +70,10 @@ jobs:
           at: ~/
       - run: cat ~/output.txt
 
+commands:
+  print_pipeline_id:
+    steps:
+      - run: echo ${CIRCLE_WORKFLOW_ID}
 
 workflows:
   # Name the workflow "welcome"
@@ -72,6 +85,15 @@ workflows:
       - print_world:
           requires:
             - print_hello
+      # - my_job:
+      #     docker:
+      #       - image: circleci/node:13.8.0
+      #       - steps:
+      #         - print_pipeline_id
+  test_code:
+    jobs:
+      - test_code
+  
   
   my_workflow:
     jobs:
@@ -79,6 +101,6 @@ workflows:
       - print_output_file:
           requires:
             - save_hello_world_output
-
+      # - my_job
 
 
